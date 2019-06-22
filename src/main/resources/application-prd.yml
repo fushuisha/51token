@@ -1,0 +1,10 @@
+server:
+  port: ${SERVER_PORT:8080}
+spring:
+  application:
+    name: service-51token
+logging.config: classpath:logback-prd.xml
+
+# Redis
+spring.redis.host: ${REDIS_HOST:localhost}
+spring.redis.password: ${REDIS_PWD:9sdkjj30ADE453lsjowe}

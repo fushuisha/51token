@@ -1,0 +1,10 @@
+server:
+  port: ${SERVER_PORT:8080}
+spring:
+  application:
+    name: service-51token
+logging.config: classpath:logback.xml
+
+# Redis
+spring.redis.host: redis.host
+
