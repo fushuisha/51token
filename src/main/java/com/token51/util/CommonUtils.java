@@ -1,5 +1,6 @@
 package com.token51.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -38,5 +39,14 @@ public class CommonUtils {
         } else {
             return false;
         }
+    }
+
+    public static String getSpringProfilesActive() {
+        String active = System.getProperty(ConstUtils.SPRING_PROFILES_ACTIVE);
+        if (StringUtils.isNotBlank(active)) {
+            return active;
+        }
+        active = System.getenv(ConstUtils.SPRING_PROFILES_ACTIVE);
+        return active;
     }
 }
