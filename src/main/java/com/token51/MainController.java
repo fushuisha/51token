@@ -106,18 +106,21 @@ public class MainController {
             schema = ConstUtils.SCHEMA;
         }
 
-        String redisStr = stringRedisTemplate.boundValueOps("schema=" + Hex.encodeHexString(schema.getBytes())).get();
-        if (StringUtils.isNotBlank(redisStr)) {
-            Map random4DigitMap = JacksonUtils.fromJson(redisStr, ConcurrentHashMap.class);
-            if (CommonUtils.isValidCollect(random4DigitMap)) {
-                String saveToken = (String) random4DigitMap.get("token");
-                if (StringUtils.equals(token, saveToken)) {
-                    JsonResult result = JacksonUtils.genJsonResult(ConstUtils.SUCCESS,
-                            schema + ":" + token + ":" + ConstUtils.SUCCESS);
-                    return JacksonUtils.callback(CommonUtils.getCurrentRequest(), JacksonUtils.toJson(result));
+        if (StringUtils.isNotBlank(token)) {
+            String redisStr = stringRedisTemplate.boundValueOps("schema=" + Hex.encodeHexString(schema.getBytes())).get();
+            if (StringUtils.isNotBlank(redisStr)) {
+                Map random4DigitMap = JacksonUtils.fromJson(redisStr, ConcurrentHashMap.class);
+                if (CommonUtils.isValidCollect(random4DigitMap)) {
+                    String saveToken = (String) random4DigitMap.get("token");
+                    if (StringUtils.equals(token, saveToken)) {
+                        JsonResult result = JacksonUtils.genJsonResult(ConstUtils.SUCCESS,
+                                schema + ":" + token + ":" + ConstUtils.SUCCESS);
+                        return JacksonUtils.callback(CommonUtils.getCurrentRequest(), JacksonUtils.toJson(result));
+                    }
                 }
             }
         }
+
         JsonResult result = JacksonUtils.genJsonResult(ConstUtils.FAIL, schema + ":" + token + ":" + ConstUtils.FAIL);
         return JacksonUtils.callback(CommonUtils.getCurrentRequest(), JacksonUtils.toJson(result));
     }
