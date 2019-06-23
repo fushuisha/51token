@@ -7,4 +7,4 @@ logging.config: classpath:logback-prd.xml
 
 # Redis
 spring.redis.host: ${REDIS_HOST:localhost}
-spring.redis.password: ${REDIS_PWD:9sdkjj30ADE453lsjowe}
+spring.redis.password: ${REDIS_PWD:localhost}
