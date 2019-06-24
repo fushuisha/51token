@@ -51,7 +51,7 @@ public class MainController {
         schema = StringUtils.trimToEmpty(schema);
         length = StringUtils.trimToEmpty(length);
         expire = StringUtils.trimToEmpty(expire);
-        if (StringUtils.isBlank(schema)) {
+        if (StringUtils.isBlank(schema) || schema.length() > 16) {
             schema = ConstUtils.SCHEMA;
         }
         int lengthInt = 4;
@@ -76,7 +76,7 @@ public class MainController {
 
         long currentTimeMillis = System.currentTimeMillis();
         Random random = new Random(currentTimeMillis);
-        int random4Digit = random.nextInt(new Double(Math.pow(10,lengthInt*1d)).intValue());
+        int random4Digit = random.nextInt(new Double(Math.pow(10, lengthInt * 1d)).intValue());
         String pattern = StringUtils.EMPTY;
         for (int i = 0; i < lengthInt; i++) {
             pattern += "0";
