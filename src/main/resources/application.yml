@@ -5,7 +5,7 @@ spring:
     name: service-51token
 logging.config: classpath:logback.xml
 
-spring.mvc.favicon.enabled: false
+#spring.mvc.favicon.enabled: false
 
 # Redis
 spring.redis.host: redis.host
