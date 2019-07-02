@@ -24,7 +24,7 @@ public class PwdController {
     private final String typeHard = "hard";
 
     /**
-     * http://127.0.0.1:8080/pwdgen?type=openssl&length=14
+     * http://127.0.0.1:8080/pwdgen?type=hard&length=14
      *
      * @return
      */

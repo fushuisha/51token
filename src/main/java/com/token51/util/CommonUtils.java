@@ -64,7 +64,7 @@ public class CommonUtils {
         try {
             Process proc = rt.exec(cmd);
             InputStream stderr = proc.getInputStream();
-            Thread.sleep(5000);
+            Thread.sleep(50);
             InputStreamReader isr = new InputStreamReader(stderr);
             BufferedReader br = new BufferedReader(isr);
             while (br.ready()) {
