@@ -7,6 +7,8 @@ import com.token51.util.JsonResult;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.GenericValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +17,8 @@ import java.util.Random;
 
 @RestController
 public class PwdController {
+
+    private final Logger logger = LoggerFactory.getLogger(PwdController.class);
 
     private final String typeOpenssl = "openssl";
     private final String typeGpg = "gpg";
@@ -49,6 +53,7 @@ public class PwdController {
             case typeHard: {
                 String cmd =  "pwgen -cnys " + lengthInt+" 1";
                 dataResult = CommonUtils.executeCmd(cmd);
+                logger.warn(dataResult);
                 break;
             }
             default: {
