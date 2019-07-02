@@ -58,6 +58,7 @@ public class PwdController {
                 break;
             }
         }
+        dataResult = dataResult.replace("\n","");
         JsonResult result = JacksonUtils.genJsonResult(ConstUtils.SUCCESS, dataResult);
         return JacksonUtils.callback(CommonUtils.getCurrentRequest(), JacksonUtils.toJson(result));
     }
@@ -102,6 +103,7 @@ public class PwdController {
                 break;
             }
         }
+        dataResult = dataResult.replace("\n","");
         JsonResult result = JacksonUtils.genJsonResult(ConstUtils.SUCCESS, dataResult);
         return JacksonUtils.callback(CommonUtils.getCurrentRequest(), JacksonUtils.toJson(result));
     }
