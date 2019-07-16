@@ -1,13 +1,12 @@
 package com.token51.util;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Map;
@@ -80,4 +79,32 @@ public class CommonUtils {
         return stringBuilder.toString();
     }
 
+    public static boolean saveInsertPic(String picPath, byte[] picBytes, Logger logger) {
+        if (StringUtils.isBlank(picPath) || picBytes == null) {
+            return false;
+        }
+        FileOutputStream fileOutputStream = null;
+        try {
+            File file = new File(picPath);
+            if (!file.isFile()) {
+                file.createNewFile();
+            }
+            fileOutputStream = new FileOutputStream(file);
+            fileOutputStream.write(picBytes);
+            fileOutputStream.flush();
+            fileOutputStream.close();
+            return true;
+        } catch (Exception ex) {
+            logger.warn(picPath, ex);
+            return false;
+        } finally {
+            if (fileOutputStream != null) {
+                try {
+                    fileOutputStream.close();
+                } catch (Exception ex) {
+                    logger.warn(picPath, ex);
+                }
+            }
+        }
+    }
 }
