@@ -222,8 +222,8 @@
                 length: tokenLength
             },
             success: function (json) {
-                var jsonString = JSON.stringify(json,null,4);
-                jQuery("#resultText").val(jsonString);
+                // var jsonString = JSON.stringify(json,null,4);
+                jQuery("#resultText").val(json.data);
             },
             complete: function (XMLHttpRequest, textStatus) {
             },
