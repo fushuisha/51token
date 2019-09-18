@@ -65,18 +65,21 @@ public class PwdController {
             case typeOpenssl: {
                 String cmd = "openssl rand -base64 " + lengthInt;
                 dataResult = CommonUtils.executeCmd(cmd);
+                dataResult = dataResult.replace("\n","");
                 dataResult = StringUtils.substring(dataResult, lengthInt * -1);
                 break;
             }
             case typeGpg: {
                 String cmd = "gpg --gen-random --armor 1 " + lengthInt;
                 dataResult = CommonUtils.executeCmd(cmd);
+                dataResult = dataResult.replace("\n","");
                 dataResult = StringUtils.substring(dataResult, lengthInt * -1);
                 break;
             }
             case typeGpg2: {
                 String cmd = "gpg2 --gen-random --armor 1 " + lengthInt;
                 dataResult = CommonUtils.executeCmd(cmd);
+                dataResult = dataResult.replace("\n","");
                 dataResult = StringUtils.substring(dataResult, lengthInt * -1);
                 break;
             }
