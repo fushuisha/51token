@@ -18,7 +18,7 @@ import java.util.Hashtable;
 
 public class QRCodeUtil {
     private static final String CHARSET = "utf-8";
-    private static final String FORMAT_NAME = "JPG";
+    public static final String FORMAT_NAME = "JPG";
     // 二维码尺寸
     private static final int QRCODE_SIZE = 300;
     // LOGO宽度
@@ -26,7 +26,7 @@ public class QRCodeUtil {
     // LOGO高度
     private static final int HEIGHT = 60;
 
-    private static BufferedImage createImage(String content, String imgPath, boolean needCompress) throws Exception {
+    public static BufferedImage createImage(String content, String imgPath, boolean needCompress) throws Exception {
         Hashtable hints = new Hashtable();
         hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
         hints.put(EncodeHintType.CHARACTER_SET, CHARSET);
@@ -49,7 +49,7 @@ public class QRCodeUtil {
         return image;
     }
 
-    private static BufferedImage createImage(String content, Image src, boolean needCompress) throws Exception {
+    public static BufferedImage createImage(String content, Image src, boolean needCompress) throws Exception {
         Hashtable hints = new Hashtable();
         hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
         hints.put(EncodeHintType.CHARACTER_SET, CHARSET);

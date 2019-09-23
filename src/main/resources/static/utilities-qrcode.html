@@ -93,7 +93,7 @@
             <i class="fa fa-bars"></i>
           </button>
           <h2 class="text-dark"><strong>51token：</strong></h2>
-          <h4 class="text-dark">密码生成器</h4>
+          <h4 class="text-dark">内置图片二维码生成器</h4>
 
           <!-- Topbar Navbar -->
           <ul class="navbar-nav ml-auto">
@@ -119,28 +119,34 @@
             <!--<a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>-->
           <!--</div>-->
           <div class="row">
+            <div class="col-md-12">
+              <div class="alert alert-warning" role="alert">免责声明：<br/>本站不收集任何个人信息，二维码图片均为Base64形式，刷新后即消失<br/>当然，也请不要上传敏感图片</div>
+            </div>
+          </div>
+
+          <div class="row">
             <div class="col-md-5">
               <br>
-              生成方式：<select id="tokenPwdLv">
-                <option value="easy">easy</option>
-                <option value="normal">normal</option>
-                <option value="hard">hard</option>
-                <option value="openssl">openssl</option>
-                <option value="gpg">gpg</option>
-                <option value="gpg2">gpg2</option>
-                <option value="java">java</option>
-              </select>
               <br>
               <br>
-              <input type="text" class="form-control" id="tokenLength" placeholder="length:长度,6-16,默认10" maxlength="2">
+              <br>
+              <input type="text" class="form-control" id="qrContent" placeholder="content:内容,最长500" maxlength="500">
+              <br>
+              <br>
+              二维码内置图片:<input type="file" class="custom-file" id="qrLogo" alt="二维码内置图片" >
             </div>
             <div class="col-md-2 text-center ">
+              <br>
+              <br>
+              <br>
               <br>
               <br>
               <button type="button" class="btn btn-primary" onclick="doGenerate()">生成 >></button>
               <br>
             </div>
-            <div class="col-md-5"><textarea class="form-control" id="resultText" rows="6"></textarea></div>
+            <div class="col-md-5">
+              <img id="qrCodeImg" src="img/qrcode_sample.jpg" />
+            </div>
           </div>
         </div>
         <!-- /.container-fluid -->
@@ -209,22 +215,41 @@
 <script src="js/common.js"></script>
 <script>
     var doGenerate = function () {
-        var tokenPwdLv = jQuery("#tokenPwdLv").val();
-        var tokenLength = jQuery("#tokenLength").val();
-        jQuery("#resultText").val("");
+        var qrContent = jQuery("#qrContent").val();
+        var logoFile = document.getElementById("qrLogo").files[0];
+        if (logoFile) {
+            var reader = new FileReader();
+            reader.readAsDataURL(logoFile);
+            reader.onload = function (e) {
+                var logoBase64 = e.target.result;
+                doSendQr(qrContent, logoBase64);
+            };
+        } else {
+            doSendQr(qrContent, "");
+        }
+    };
+
+    var doSendQr = function (qrContent, logoBase64) {
         jQuery.ajax({
-            type: "GET",
-            url: cp + "pwdgen",
+            type: "POST",
+            url: cp + "qrcode/generate",
             cache: false,
-            contentType: 'application/json',
+            // contentType: 'application/json',
+            // contentType: "application/x-www-form-urlencoded; charset=utf-8",
+            // processData:false,   //  告诉jquery不要处理发送的数据
+            // contentType:false,    // 告诉jquery不要设置content-Type请求头
             dataType: "json",
             data: {
-                type: tokenPwdLv,
-                length: tokenLength
+                qrContent: qrContent,
+                qrLogo: logoBase64
             },
             success: function (json) {
                 // var jsonString = JSON.stringify(json,null,4);
-                jQuery("#resultText").val(json.data);
+                if (json.code === "200") {
+                    jQuery("#qrCodeImg").attr("src", json.data);
+                } else {
+                    alert(json.msg);
+                }
             },
             complete: function (XMLHttpRequest, textStatus) {
             },
