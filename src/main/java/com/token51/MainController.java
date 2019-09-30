@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.text.DecimalFormat;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
@@ -37,6 +38,19 @@ public class MainController {
     @RequestMapping(value = "/health_check")
     public String healthCheck() {
         return "ok:" + port;
+    }
+
+    /**
+     * http://127.0.0.1:8080/action/count
+     *
+     * @return
+     */
+    @RequestMapping(value = "/action/count")
+    public String actionCount() {
+        Map<String, String> resultMap = new HashMap<>();
+        String actionCountKey = CommonUtils.getActionCountKey("/qrcode/generate");
+        resultMap.put(actionCountKey, stringRedisTemplate.opsForValue().get(actionCountKey));
+        return JacksonUtils.toPrettyJson(resultMap);
     }
 
     /**
@@ -90,6 +104,7 @@ public class MainController {
         stringRedisTemplate.boundValueOps("schema=" + Hex.encodeHexString(schema.getBytes()))
                 .set(JacksonUtils.toPrettyJson(random4DigitMap), expireInt, TimeUnit.SECONDS);
         JsonResult result = JacksonUtils.genJsonResult(ConstUtils.SUCCESS, random4DigitStr);
+        CommonUtils.actionCount("/get4DigitToken", stringRedisTemplate);
         return JacksonUtils.callback(CommonUtils.getCurrentRequest(), JacksonUtils.toJson(result));
     }
 
@@ -122,6 +137,7 @@ public class MainController {
         }
 
         JsonResult result = JacksonUtils.genJsonResult(ConstUtils.FAIL, schema + ":" + token + ":" + ConstUtils.FAIL);
+        CommonUtils.actionCount("/verify4DigitToken", stringRedisTemplate);
         return JacksonUtils.callback(CommonUtils.getCurrentRequest(), JacksonUtils.toJson(result));
     }
 }

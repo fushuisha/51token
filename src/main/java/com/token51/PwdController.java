@@ -9,6 +9,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,6 +28,9 @@ public class PwdController {
     private final String typeEasy = "easy";
     private final String typeNormal = "normal";
     private final String typeHard = "hard";
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     /**
      * http://127.0.0.1:8080/pwdgen?type=hard&length=14
@@ -92,6 +97,7 @@ public class PwdController {
         }
         dataResult = dataResult.replace("\n","").replace("<","[").replace(">","]");
         JsonResult result = JacksonUtils.genJsonResult(ConstUtils.SUCCESS, dataResult);
+        CommonUtils.actionCount("/pwdgen", stringRedisTemplate);
         return JacksonUtils.callback(CommonUtils.getCurrentRequest(), JacksonUtils.toJson(result));
     }
 

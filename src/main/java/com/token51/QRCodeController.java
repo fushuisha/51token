@@ -3,8 +3,12 @@ package com.token51;
 import com.token51.util.*;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.validator.GenericValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.BoundValueOperations;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,6 +29,9 @@ import java.io.IOException;
 @RestController
 public class QRCodeController {
     private final Logger logger = LoggerFactory.getLogger(QRCodeController.class);
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     /**
      * http://127.0.0.1:8080/qrcode/encode?content=http://www.51token.club
@@ -59,6 +66,7 @@ public class QRCodeController {
         //ImageIO.write(bufferedImage, QRCodeUtil.FORMAT_NAME, new File("/tmp/qrcode/qrcode.jpg"));
         String data = "data:image/jpeg;base64," + Base64.encodeBase64String(outputStream.toByteArray());
         JsonResult result = JacksonUtils.genJsonResult(ConstUtils.SUCCESS, data);
+        CommonUtils.actionCount("/qrcode/generate", stringRedisTemplate);
         return JacksonUtils.callback(request, JacksonUtils.toJson(result));
     }
 
@@ -81,52 +89,9 @@ public class QRCodeController {
             return JacksonUtils.callback(request, JacksonUtils.toJson(result));
         }
         JsonResult result = JacksonUtils.genJsonResult(ConstUtils.SUCCESS, str);
+        CommonUtils.actionCount("/qrcode/verify", stringRedisTemplate);
         return JacksonUtils.callback(request, JacksonUtils.toJson(result));
     }
 
 
-    private class QrImageInputStreamImpl extends ImageInputStreamImpl {
-        private ByteArrayInputStream stream;
-
-        public QrImageInputStreamImpl(byte[] bytes) {
-            this.stream = new ByteArrayInputStream(bytes);
-        }
-
-        @Override
-        public int read() throws IOException {
-            bitOffset = 0;
-
-            int val = stream.read();
-
-            if (val != -1) {
-                streamPos++;
-            }
-
-            return val;
-        }
-
-        @Override
-        public int read(byte[] b, int off, int len) throws IOException {
-            if (b == null) {
-                throw new NullPointerException("b == null!");
-            }
-            if (off < 0 || len < 0 || off + len > b.length || off + len < 0) {
-                throw new IndexOutOfBoundsException("off < 0 || len < 0 || off+len > b.length || off+len < 0!");
-            }
-
-            bitOffset = 0;
-
-            if (len == 0) {
-                return 0;
-            }
-
-            int read = stream.read(b, off, len);
-
-            if (read > 0) {
-                streamPos += read;
-            }
-
-            return read;
-        }
-    }
 }

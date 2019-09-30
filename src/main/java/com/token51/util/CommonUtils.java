@@ -1,7 +1,10 @@
 package com.token51.util;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.validator.GenericValidator;
 import org.slf4j.Logger;
+import org.springframework.data.redis.core.BoundValueOperations;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -12,11 +15,12 @@ import java.util.Collection;
 import java.util.Map;
 
 public class CommonUtils {
-    public static void main(String[] args) throws Exception  {
+    public static void main(String[] args) throws Exception {
         String cmd = "ping www.baidu.com";
         String result = executeCmd(cmd);
         System.out.println(result);
     }
+
     public static HttpServletRequest getCurrentRequest() {
         try {
             HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
@@ -105,6 +109,23 @@ public class CommonUtils {
                     logger.warn(picPath, ex);
                 }
             }
+        }
+    }
+
+    public static String getActionCountKey(String arg) {
+        return "action_count" + arg.replace("/", "_");
+    }
+
+    public static void actionCount(String arg, StringRedisTemplate stringRedisTemplate) {
+        String actionCountKey = CommonUtils.getActionCountKey(arg);
+        BoundValueOperations<String, String> boundValueOperations = stringRedisTemplate.boundValueOps(actionCountKey);
+        String actionCountStr = boundValueOperations.get();
+        if (StringUtils.isNotBlank(actionCountStr) && GenericValidator.isLong(actionCountStr)) {
+            Long actionCountLong = Long.parseLong(actionCountStr);
+            actionCountLong += 1;
+            boundValueOperations.set(actionCountLong.toString());
+        } else {
+            boundValueOperations.set("1");
         }
     }
 }
