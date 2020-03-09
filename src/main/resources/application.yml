@@ -8,5 +8,5 @@ logging.config: classpath:logback.xml
 #spring.mvc.favicon.enabled: false
 
 # Redis
-spring.redis.host: redis.host
+spring.redis.host: localhost
 

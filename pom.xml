@@ -189,6 +189,11 @@
             <!--<artifactId>logback-ext-spring</artifactId>-->
             <!--<version>0.1.5</version>-->
         <!--</dependency>-->
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>3.4.0</version>
+        </dependency>
     </dependencies>
     <!--<dependencyManagement>-->
         <!--<dependencies>-->

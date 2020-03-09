@@ -93,7 +93,7 @@
             <i class="fa fa-bars"></i>
           </button>
           <h2 class="text-dark"><strong>51token：</strong></h2>
-          <h4 class="text-dark">多位随机数可过期Token</h4>
+          <h4 class="text-dark">密码生成器</h4>
 
           <!-- Topbar Navbar -->
           <ul class="navbar-nav ml-auto">
@@ -120,17 +120,25 @@
           <!--</div>-->
           <div class="row">
             <div class="col-md-5">
-              <input type="text" class="form-control" id="tokenSchema" placeholder="schema:区分因子,默认51token" maxlength="16">
-              <input type="text" class="form-control" id="tokenLength" placeholder="length:长度,1-9,默认4" maxlength="2">
-              <input type="text" class="form-control" id="tokenExpire" placeholder="expire:过期时间,单位秒,默认30秒" maxlength="5">
-              <input type="text" class="form-control" id="tokenToken"  placeholder="token:生成时不要填,验证时必填" maxlength="10">
+              <br>
+              生成方式：<select id="tokenPwdLv">
+                <option value="easy">easy</option>
+                <option value="normal">normal</option>
+                <option value="hard">hard</option>
+                <option value="openssl">openssl</option>
+                <option value="gpg">gpg</option>
+                <option value="gpg2">gpg2</option>
+                <option value="java">java</option>
+              </select>
+              <br>
+              <br>
+              <input type="text" class="form-control" id="tokenLength" placeholder="length:长度,6-16,默认10" maxlength="2">
             </div>
             <div class="col-md-2 text-center ">
               <br>
+              <br>
               <button type="button" class="btn btn-primary" onclick="doGenerate()">生成 >></button>
               <br>
-              <br>
-              <button type="button" class="btn btn-primary" onclick="doVerify()">验证 >></button>
             </div>
             <div class="col-md-5"><textarea class="form-control" id="resultText" rows="6"></textarea></div>
           </div>
@@ -201,48 +209,22 @@
 <script src="js/common.js"></script>
 <script>
     var doGenerate = function () {
-        var tokenSchema = jQuery("#tokenSchema").val();
+        var tokenPwdLv = jQuery("#tokenPwdLv").val();
         var tokenLength = jQuery("#tokenLength").val();
-        var tokenExpire = jQuery("#tokenExpire").val();
         jQuery("#resultText").val("");
         jQuery.ajax({
             type: "GET",
-            url: cp + "get4DigitToken",
+            url: cp + "pwdgen",
             cache: false,
             contentType: 'application/json',
             dataType: "json",
             data: {
-                schema: tokenSchema,
-                length: tokenLength,
-                expire: tokenExpire
+                type: tokenPwdLv,
+                length: tokenLength
             },
             success: function (json) {
-                var jsonString = JSON.stringify(json,null,4);
-                jQuery("#resultText").val(jsonString);
-            },
-            complete: function (XMLHttpRequest, textStatus) {
-            },
-            error: function (XMLHttpRequest, textStatus, errorThrown) {
-            }
-        });
-    };
-    var doVerify = function () {
-        var tokenSchema = jQuery("#tokenSchema").val();
-        var tokenToken = jQuery("#tokenToken").val();
-        jQuery("#resultText").val("");
-        jQuery.ajax({
-            type: "GET",
-            url: cp + "verify4DigitToken",
-            cache: false,
-            contentType: 'application/json',
-            dataType: "json",
-            data: {
-                schema: tokenSchema,
-                token: tokenToken
-            },
-            success: function (json) {
-                var jsonString = JSON.stringify(json,null,4);
-                jQuery("#resultText").val(jsonString);
+                // var jsonString = JSON.stringify(json,null,4);
+                jQuery("#resultText").val(json.data);
             },
             complete: function (XMLHttpRequest, textStatus) {
             },

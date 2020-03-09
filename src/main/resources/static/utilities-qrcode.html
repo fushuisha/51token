@@ -93,7 +93,7 @@
             <i class="fa fa-bars"></i>
           </button>
           <h2 class="text-dark"><strong>51token：</strong></h2>
-          <h4 class="text-dark">多位随机数可过期Token</h4>
+          <h4 class="text-dark">内置图片二维码生成器</h4>
 
           <!-- Topbar Navbar -->
           <ul class="navbar-nav ml-auto">
@@ -119,20 +119,34 @@
             <!--<a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>-->
           <!--</div>-->
           <div class="row">
+            <div class="col-md-12">
+              <div class="alert alert-warning" role="alert">免责声明：<br/>本站不收集任何个人信息，二维码图片均为Base64形式，刷新后即消失<br/>当然，也请不要上传敏感图片</div>
+            </div>
+          </div>
+
+          <div class="row">
             <div class="col-md-5">
-              <input type="text" class="form-control" id="tokenSchema" placeholder="schema:区分因子,默认51token" maxlength="16">
-              <input type="text" class="form-control" id="tokenLength" placeholder="length:长度,1-9,默认4" maxlength="2">
-              <input type="text" class="form-control" id="tokenExpire" placeholder="expire:过期时间,单位秒,默认30秒" maxlength="5">
-              <input type="text" class="form-control" id="tokenToken"  placeholder="token:生成时不要填,验证时必填" maxlength="10">
+              <br>
+              <br>
+              <br>
+              <br>
+              <input type="text" class="form-control" id="qrContent" placeholder="content:内容,最长500" maxlength="500">
+              <br>
+              <br>
+              二维码内置图片:<input type="file" class="custom-file" id="qrLogo" alt="二维码内置图片" >
             </div>
             <div class="col-md-2 text-center ">
               <br>
+              <br>
+              <br>
+              <br>
+              <br>
               <button type="button" class="btn btn-primary" onclick="doGenerate()">生成 >></button>
               <br>
-              <br>
-              <button type="button" class="btn btn-primary" onclick="doVerify()">验证 >></button>
             </div>
-            <div class="col-md-5"><textarea class="form-control" id="resultText" rows="6"></textarea></div>
+            <div class="col-md-5">
+              <img id="qrCodeImg" src="img/qrcode_sample.jpg" />
+            </div>
           </div>
         </div>
         <!-- /.container-fluid -->
@@ -201,48 +215,41 @@
 <script src="js/common.js"></script>
 <script>
     var doGenerate = function () {
-        var tokenSchema = jQuery("#tokenSchema").val();
-        var tokenLength = jQuery("#tokenLength").val();
-        var tokenExpire = jQuery("#tokenExpire").val();
-        jQuery("#resultText").val("");
-        jQuery.ajax({
-            type: "GET",
-            url: cp + "get4DigitToken",
-            cache: false,
-            contentType: 'application/json',
-            dataType: "json",
-            data: {
-                schema: tokenSchema,
-                length: tokenLength,
-                expire: tokenExpire
-            },
-            success: function (json) {
-                var jsonString = JSON.stringify(json,null,4);
-                jQuery("#resultText").val(jsonString);
-            },
-            complete: function (XMLHttpRequest, textStatus) {
-            },
-            error: function (XMLHttpRequest, textStatus, errorThrown) {
-            }
-        });
+        var qrContent = jQuery("#qrContent").val();
+        var logoFile = document.getElementById("qrLogo").files[0];
+        if (logoFile) {
+            var reader = new FileReader();
+            reader.readAsDataURL(logoFile);
+            reader.onload = function (e) {
+                var logoBase64 = e.target.result;
+                doSendQr(qrContent, logoBase64);
+            };
+        } else {
+            doSendQr(qrContent, "");
+        }
     };
-    var doVerify = function () {
-        var tokenSchema = jQuery("#tokenSchema").val();
-        var tokenToken = jQuery("#tokenToken").val();
-        jQuery("#resultText").val("");
+
+    var doSendQr = function (qrContent, logoBase64) {
         jQuery.ajax({
-            type: "GET",
-            url: cp + "verify4DigitToken",
+            type: "POST",
+            url: cp + "qrcode/generate",
             cache: false,
-            contentType: 'application/json',
+            // contentType: 'application/json',
+            // contentType: "application/x-www-form-urlencoded; charset=utf-8",
+            // processData:false,   //  告诉jquery不要处理发送的数据
+            // contentType:false,    // 告诉jquery不要设置content-Type请求头
             dataType: "json",
             data: {
-                schema: tokenSchema,
-                token: tokenToken
+                qrContent: qrContent,
+                qrLogo: logoBase64
             },
             success: function (json) {
-                var jsonString = JSON.stringify(json,null,4);
-                jQuery("#resultText").val(jsonString);
+                // var jsonString = JSON.stringify(json,null,4);
+                if (json.code === "200") {
+                    jQuery("#qrCodeImg").attr("src", json.data);
+                } else {
+                    alert(json.msg);
+                }
             },
             complete: function (XMLHttpRequest, textStatus) {
             },
