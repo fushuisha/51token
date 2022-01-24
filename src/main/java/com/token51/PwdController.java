@@ -34,6 +34,7 @@ public class PwdController {
 
     /**
      * http://127.0.0.1:8080/pwdgen?type=hard&length=14
+     * pwgen -cnys 10 1
      *
      * @return
      */
