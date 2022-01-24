@@ -117,7 +117,7 @@ public class MainController {
     public String verify4DigitToken(@RequestParam(required = false) String schema, @RequestParam String token) {
         schema = StringUtils.trimToEmpty(schema);
         token = StringUtils.trimToEmpty(token);
-        if (StringUtils.isBlank(schema)) {
+        if (StringUtils.isBlank(schema) || schema.length() > 16) {
             schema = ConstUtils.SCHEMA;
         }
 
